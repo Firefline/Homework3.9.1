@@ -16,12 +16,50 @@ public:
 		denominator_ = denominator;
 	}
 	double Abs() { return std::sqrt(numerator_ * numerator_ + denominator_ * denominator_); }
-	bool operator==(Fraction other) { return Abs() == other.Abs(); }
-	bool operator!=(Fraction other) { return !(*this == other); }
-	bool operator>(Fraction other) { return Abs() > other.Abs(); }
-	bool operator<(Fraction other) { return other > *this; }
-	bool operator>=(Fraction other) { return !(*this < other); }
-	bool operator<=(Fraction other) { return !(*this > other); }
+	bool operator==(Fraction other) 
+	{ 
+		while (denominator_ > other.denominator_)
+		{
+			other.numerator_ = other.numerator_ + other.numerator_;
+			other.denominator_ = other.denominator_ + other.denominator_;
+		}
+		while (denominator_ < other.denominator_)
+		{
+			numerator_ = numerator_ + numerator_;
+			denominator_ = denominator_ + denominator_;
+		}
+		return Abs() == other.Abs(); 
+	}
+	bool operator!=(Fraction other) 
+	{ 
+		while (denominator_ > other.denominator_)
+		{
+			other.numerator_ = other.numerator_ + other.numerator_;
+			other.denominator_ = other.denominator_ + other.denominator_;
+		}
+		while (denominator_ < other.denominator_)
+		{
+			numerator_ = numerator_ + numerator_;
+			denominator_ = denominator_ + denominator_;
+		}
+		return !(*this == other); 
+	}
+	bool operator>(Fraction other) 
+	{
+		return Abs() > other.Abs(); 
+	}
+	bool operator<(Fraction other) 
+	{ 
+		return other > *this; 
+	}
+	bool operator>=(Fraction other) 
+	{ 
+		return !(*this < other); 
+	}
+	bool operator<=(Fraction other) 
+	{ 
+		return !(*this > other); 
+	}
 };
 
 int main(int argc, char** argv)
