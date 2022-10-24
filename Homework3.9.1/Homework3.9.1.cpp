@@ -3,6 +3,12 @@
 
 #include <iostream>
 
+class DivisionByZeroException : public std::exception
+{
+public:
+	const char* what() const override { return "Попытка деления на 0"; }
+};
+
 class Fraction
 {
 private:
@@ -15,33 +21,24 @@ public:
 		numerator_ = numerator;
 		denominator_ = denominator;
 	}
-	double Abs() { return std::sqrt(numerator_ * numerator_ + denominator_ * denominator_); }
+	double Abs() 
+	{
+		if (denominator_ == 0) throw DivisionByZeroException();
+		return std::sqrt(numerator_ * numerator_ + denominator_ * denominator_);
+	}
+	double div() 
+	{
+		if (denominator_ == 0) throw DivisionByZeroException();
+		return numerator_ / denominator_;
+	}
+	double delta = 0.0000001;
 	bool operator==(Fraction other) 
 	{ 
-		while (denominator_ > other.denominator_)
-		{
-			other.numerator_ = other.numerator_ + other.numerator_;
-			other.denominator_ = other.denominator_ + other.denominator_;
-		}
-		while (denominator_ < other.denominator_)
-		{
-			numerator_ = numerator_ + numerator_;
-			denominator_ = denominator_ + denominator_;
-		}
-		return Abs() == other.Abs(); 
+		return fabs(div() - other.div()) < delta;
+		//return Abs() == other.Abs(); 
 	}
 	bool operator!=(Fraction other) 
 	{ 
-		while (denominator_ > other.denominator_)
-		{
-			other.numerator_ = other.numerator_ + other.numerator_;
-			other.denominator_ = other.denominator_ + other.denominator_;
-		}
-		while (denominator_ < other.denominator_)
-		{
-			numerator_ = numerator_ + numerator_;
-			denominator_ = denominator_ + denominator_;
-		}
 		return !(*this == other); 
 	}
 	bool operator>(Fraction other) 
@@ -66,18 +63,25 @@ int main(int argc, char** argv)
 {
     setlocale(LC_ALL, "Russian");
 
-	{
-		Fraction f1(4, 3);
-		Fraction f2(6, 11);
+	Fraction f1(4, 3);
+	Fraction f2(6, 11);
 
-		std::cout << "f1" << ((f1 == f2) ? " == " : " not == ") << "f2" << '\n';
-		std::cout << "f1" << ((f1 != f2) ? " != " : " not != ") << "f2" << '\n';
-		std::cout << "f1" << ((f1 < f2) ? " < " : " not < ") << "f2" << '\n';
-		std::cout << "f1" << ((f1 > f2) ? " > " : " not > ") << "f2" << '\n';
-		std::cout << "f1" << ((f1 <= f2) ? " <= " : " not <= ") << "f2" << '\n';
-		std::cout << "f1" << ((f1 >= f2) ? " >= " : " not >= ") << "f2" << '\n';
-		return 0;
+	try
+	{
+		f1 == f2;
 	}
+	catch (const DivisionByZeroException& ex)
+	{
+		std::cout << ex.what() << std::endl;
+	}
+
+	std::cout << "f1" << ((f1 == f2) ? " == " : " not == ") << "f2" << '\n';
+	std::cout << "f1" << ((f1 != f2) ? " != " : " not != ") << "f2" << '\n';
+	std::cout << "f1" << ((f1 < f2) ? " < " : " not < ") << "f2" << '\n';
+	std::cout << "f1" << ((f1 > f2) ? " > " : " not > ") << "f2" << '\n';
+	std::cout << "f1" << ((f1 <= f2) ? " <= " : " not <= ") << "f2" << '\n';
+	std::cout << "f1" << ((f1 >= f2) ? " >= " : " not >= ") << "f2" << '\n';
+	return 0;
 }
 
 // Запуск программы: CTRL+F5 или меню "Отладка" > "Запуск без отладки"
